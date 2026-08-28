@@ -65,12 +65,32 @@ private struct Linear: Parser.`Protocol` {
     }
 }
 
+private struct Unmatched: ~Copyable {
+    let value: Int
+}
+
+private struct UnmatchedParser: Parser.`Protocol` {
+    typealias Input = Int
+    typealias Output = Unmatched
+    typealias Failure = Never
+    typealias Body = Never
+
+    borrowing func parse(_ input: inout Int) -> Unmatched {
+        Unmatched(value: input)
+    }
+}
+
 private let leaf = Optic<Node, Node, Int, Int>.Prism(
     embed: Node.leaf,
     extract: {
         guard case .leaf(let value) = $0 else { return nil }
         return value
     }
+)
+
+private let unmatched = Optic<Unmatched, Unmatched, Int, Int>.Prism(
+    match: { source in .left(source) },
+    embed: { Unmatched(value: $0) }
 )
 
 @Suite
@@ -203,6 +223,22 @@ struct `Optic Parser` {
 
         var input: Void = ()
         #expect(throws: TransformFailure.transform(0)) {
+            try parser.parse(&input)
+        }
+    }
+
+    @Test
+    func `Prism rejecting matching consumes a noncopyable target`() {
+        let parser = UnmatchedParser().map(
+            matching: unmatched,
+            failure: { target -> TransformFailure in
+                .transform(target.value)
+            }
+        )
+        requireFailure(parser, TransformFailure.self)
+
+        var input = 42
+        #expect(throws: TransformFailure.transform(42)) {
             try parser.parse(&input)
         }
     }
