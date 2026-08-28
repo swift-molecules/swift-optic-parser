@@ -20,11 +20,11 @@ let package = Package(
     dependencies: [
         .package(
             url: "https://github.com/swift-atoms/swift-optic.git",
-            branch: "migration/static-module-names"
+            branch: "main"
         ),
         .package(
             url: "https://github.com/swift-atoms/swift-parser.git",
-            branch: "migration/static-module-names"
+            branch: "main"
         ),
     ],
     targets: [
