@@ -1,4 +1,8 @@
+import Either
+import Optic
 import Optic_Parser
+import Parser
+import Parser_Map
 import Testing
 
 private enum UpstreamFailure: Error, Equatable {
@@ -16,7 +20,6 @@ private enum BackwardFailure: Error {
 private struct Succeed<Output>: Parser.`Protocol` {
     typealias Input = Void
     typealias Failure = Never
-    typealias Body = Never
 
     let output: Output
 
@@ -28,7 +31,6 @@ private struct Succeed<Output>: Parser.`Protocol` {
 private struct Fail<Output>: Parser.`Protocol` {
     typealias Input = Void
     typealias Failure = UpstreamFailure
-    typealias Body = Never
 
     borrowing func parse(_ input: inout Void) throws(UpstreamFailure) -> Output {
         throw .upstream
@@ -57,7 +59,6 @@ private struct Linear: Parser.`Protocol` {
     typealias Input = Int
     typealias Output = ScopedToken
     typealias Failure = Never
-    typealias Body = Never
 
     @_lifetime(&input)
     borrowing func parse(_ input: inout Int) -> ScopedToken {
@@ -73,7 +74,6 @@ private struct UnmatchedParser: Parser.`Protocol` {
     typealias Input = Int
     typealias Output = Unmatched
     typealias Failure = Never
-    typealias Body = Never
 
     borrowing func parse(_ input: inout Int) -> Unmatched {
         Unmatched(value: input)

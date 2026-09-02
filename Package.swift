@@ -19,6 +19,10 @@ let package = Package(
     ],
     dependencies: [
         .package(
+            url: "https://github.com/swift-atoms/swift-either.git",
+            branch: "main"
+        ),
+        .package(
             url: "https://github.com/swift-atoms/swift-optic.git",
             branch: "main"
         ),
@@ -31,6 +35,7 @@ let package = Package(
         .target(
             name: "Optic Parser",
             dependencies: [
+                .product(name: "Either", package: "swift-either"),
                 .product(name: "Optic", package: "swift-optic"),
                 .product(name: "Parser", package: "swift-parser"),
                 .product(name: "Parser Map", package: "swift-parser"),
@@ -40,6 +45,10 @@ let package = Package(
             name: "Optic Parser Tests",
             dependencies: [
                 .target(name: "Optic Parser"),
+                .product(name: "Either", package: "swift-either"),
+                .product(name: "Optic", package: "swift-optic"),
+                .product(name: "Parser", package: "swift-parser"),
+                .product(name: "Parser Map", package: "swift-parser"),
             ]
         ),
     ],
