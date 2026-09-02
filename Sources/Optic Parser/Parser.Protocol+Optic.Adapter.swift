@@ -2,7 +2,12 @@ public import Optic
 public import Parser
 public import Parser_Map
 
-extension Parser::Parser.`Protocol` where Self: ~Copyable {
+extension Parser::Parser.`Protocol`
+where
+    Self: ~Copyable,
+    Input: ~Copyable & ~Escapable,
+    Output: ~Copyable & ~Escapable
+{
 
     @inlinable
     public consuming func map<
