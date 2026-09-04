@@ -80,18 +80,22 @@ private struct UnmatchedParser: Parser.`Protocol` {
     }
 }
 
-private let leaf = Optic<Node, Node, Int, Int>.Prism(
-    embed: Node.leaf,
-    extract: {
-        guard case .leaf(let value) = $0 else { return nil }
-        return value
-    }
-)
+private var leaf: Optic<Node, Node, Int, Int>.Prism {
+    Optic<Node, Node, Int, Int>.Prism(
+        embed: Node.leaf,
+        extract: {
+            guard case .leaf(let value) = $0 else { return nil }
+            return value
+        }
+    )
+}
 
-private let unmatched = Optic<Unmatched, Unmatched, Int, Int>.Prism(
-    match: { source in .left(source) },
-    embed: { Unmatched(value: $0) }
-)
+private var unmatched: Optic<Unmatched, Unmatched, Int, Int>.Prism {
+    Optic<Unmatched, Unmatched, Int, Int>.Prism(
+        match: { source in .left(source) },
+        embed: { Unmatched(value: $0) }
+    )
+}
 
 @Suite
 struct `Optic Parser` {
